@@ -201,7 +201,7 @@ def main():
         },thread):
             print(f"\n\nNew msg:\n++++++++\n{s}\n******\n")
             st.write(s)
-        print("Completed writer")
+        print("Completed writer Step 1")
 
 
 if __name__ == '__main__':
