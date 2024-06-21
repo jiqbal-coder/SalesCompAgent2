@@ -91,19 +91,21 @@ class ewriter():
         print("Completed ewriter init")
     
     def plan_node(self, state: AgentState):
+        print(f"\n\n Starting plan-node\n$$$$$\n{state}\n@@@@@\n")
         messages = [
             SystemMessage(content=self.PLAN_PROMPT), 
             HumanMessage(content=state['task'])
         ]
         response = self.model.invoke(messages)
         msg=f"PLAN_NODE: Plan: {response.content}\n **** for ****\n MSGS: {messages}\n  *\n **\n***\n"
-        print(msg)
-        st.write(msg)
+        #print(msg)
+        #st.write(msg)
         return {"plan": response.content,
                "lnode": "planner",
                 "count": 1,
                }
     def research_plan_node(self, state: AgentState):
+        print(f"\n\n Starting research-plan-node\n$$$$$\n{state}\n@@@@@\n")
         queries = self.model.with_structured_output(Queries).invoke([
             SystemMessage(content=self.RESEARCH_PLAN_PROMPT),
             HumanMessage(content=state['task'])
@@ -114,8 +116,8 @@ class ewriter():
             for r in response['results']:
                 content.append(r['content'])
         msg=f"RESEARCH_PLAN_NODE: {content} fr queries: {queries.queries}"
-        print(msg)
-        st.write(msg)
+        #print(msg)
+        #st.write(msg)
         return {"content": content,
                 "queries": queries.queries,
                "lnode": "research_plan",
@@ -158,6 +160,7 @@ class ewriter():
             "count": 1,
         }
     def reflection_node(self, state: AgentState):
+        print(f"\n\n Starting reflectin-node\n$$$$$\n{state}\n@@@@@\n")
         messages = [
             SystemMessage(content=self.REFLECTION_PROMPT), 
             HumanMessage(content=state['draft'])
@@ -168,6 +171,7 @@ class ewriter():
                 "count": 1,
         }
     def research_critique_node(self, state: AgentState):
+        print(f"\n\n Starting research-critique-node\n$$$$$\n{state}\n@@@@@\n")
         queries = self.model.with_structured_output(Queries).invoke([
             SystemMessage(content=self.RESEARCH_CRITIQUE_PROMPT),
             HumanMessage(content=state['critique'])
@@ -186,6 +190,9 @@ class ewriter():
             return END
         return "reflect"
 
+def state_printer(state):
+    st.sidebar.write(state)
+
 def main():
     st.write('Hello, world!')
     stream_handler = StreamHandler(st.empty())
@@ -201,6 +208,7 @@ def main():
         },thread):
             print(f"\n\nNew msg:\n++++++++\n{s}\n******\n")
             st.write(s)
+            #st.sidebar.write(abot.graph.state)
         print("Completed writer Step 1")
 
 
